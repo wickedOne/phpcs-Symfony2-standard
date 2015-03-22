@@ -67,11 +67,12 @@ class Symfony2_Sniffs_Objects_ObjectInstantiationSniff implements PHP_CodeSniffe
         );
 
         $object = $stackPtr;
+        $line   = $tokens[$object]['line'];
 
-        while ($object) {
+        while ($object && $tokens[$object]['line'] === $line) {
             $object = $phpcsFile->findNext($allowed, $object + 1);
 
-            if (!in_array($tokens[$object + 1]['code'], $allowed)) {
+            if ($tokens[$object]['line'] === $line && !in_array($tokens[$object + 1]['code'], $allowed)) {
                 if ($tokens[$object + 1]['code'] !== T_OPEN_PARENTHESIS) {
                     $phpcsFile->addError(
                         'Use parentheses when instantiating classes',
